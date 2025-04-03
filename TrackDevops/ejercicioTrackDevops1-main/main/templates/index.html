@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio DevOps - Pokémon</title>
+</head>
+<body>
+    <h1>Bienvenido a la búsqueda de Pokémon</h1>
+    <p>Escribe el nombre de un Pokémon para obtener su peso.</p>
+    
+    <form action="" method="post">
+        {% csrf_token %}
+        <label for="pokemon">Nombre del Pokémon:</label>
+        <input type="text" id="name" name="name" placeholder="Escribe el nombre aquí" required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% elif pokemon_data %}
+        <h2>Resultados para: {{ pokemon_data.name }}</h2>
+        <ul>
+            <li><strong>Peso:</strong> {{ pokemon_data.weight }} kg</li>
+            <li><strong>Altura:</strong> {{ pokemon_data.height }} m</li>
+        </ul>
+    {% endif %}
+</body>
+</html>

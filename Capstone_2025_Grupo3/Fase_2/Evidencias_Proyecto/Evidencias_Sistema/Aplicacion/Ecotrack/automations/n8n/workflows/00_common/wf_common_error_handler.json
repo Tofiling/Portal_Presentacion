@@ -1,0 +1,14 @@
+{
+  "name": "Common - Error Handler",
+  "nodes": [
+    {
+      "parameters": { "functionCode": "const i = $input.all()[0][0]; console.error('n8n error:', i.json); return [{json:{handled:true, in:i.json}}];" },
+      "name": "Log",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [480, 300]
+    }
+  ],
+  "connections": {},
+  "active": false
+}

@@ -1,0 +1,12 @@
+<!doctype html>
+<html>
+  <body>
+    <h2>Declaración de Siniestro recibida</h2>
+    <p><b>Fecha:</b> {{antecedentes_siniestro.fecha_accidente}} {{antecedentes_siniestro.hora_accidente}}</p>
+    <p><b>Comuna:</b> {{antecedentes_siniestro.comuna}}</p>
+    <p><b>Vehículo A:</b> {{vehiculo_a.persona.nombre_completo}} — Patente {{vehiculo_a.vehiculo.patente}}</p>
+    <p><b>Vehículo B:</b> {{vehiculo_b.persona.nombre_completo}} — Patente {{vehiculo_b.vehiculo.patente}}</p>
+    <hr/>
+    <p>Folio: {{metadata.createdAt}} | Origen: {{metadata.origen}}</p>
+  </body>
+</html>

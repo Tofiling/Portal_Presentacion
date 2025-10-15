@@ -1,0 +1,189 @@
+{
+  "name": "FID Siniestro - Intake (Webhook → Validate → API → Email → Response)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "ecotrack/fid-siniestro",
+        "methods": ["POST","OPTIONS"],
+        "responseMode": "lastNode",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "Webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "filePath": "/schemas/fid-declaracion.ui.json",
+        "binaryPropertyName": "schema"
+      },
+      "id": "ReadSchema",
+      "name": "Read Schema",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [220, 80]
+    },
+    {
+      "parameters": {
+        "filePath": "/schemas/fid-declaracion.example.json",
+        "binaryPropertyName": "example"
+      },
+      "id": "ReadExample",
+      "name": "Read Example",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [220, 520]
+    },
+    {
+      "parameters": {
+        "setAllData": false,
+        "options": {},
+        "binaryPropertyName": "schema",
+        "destinationPropertyName": "loadedSchema",
+        "convertTo": "json"
+      },
+      "id": "SchemaToJson",
+      "name": "Schema → JSON",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [460, 80]
+    },
+    {
+      "parameters": {
+        "setAllData": false,
+        "options": {},
+        "binaryPropertyName": "example",
+        "destinationPropertyName": "loadedExample",
+        "convertTo": "json"
+      },
+      "id": "ExampleToJson",
+      "name": "Example → JSON",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [460, 520]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Combina inputs: 0=Webhook, 1=Schema, 2=Example\\nconst inputs = $input.all();\\nconst payload = inputs[0][0]?.json || {};\\nconst schema = (inputs[1][0]?.json || {}).loadedSchema || {};\\nconst example = (inputs[2][0]?.json || {}).loadedExample || {};\\n\\n// Extrae claves requeridas del UI schema\\nfunction requiredKeysFromSchema(s){\\n  const req = [];\\n  const sections = s.sections || [];\\n  for (const sec of sections){\\n    if (Array.isArray(sec.fields)){\\n      for (const f of sec.fields){ if (f.required) req.push(f.key); }\\n    }\\n    if (Array.isArray(sec.groups)){\\n      for (const g of sec.groups){\\n        if (Array.isArray(g.fields)){\\n          for (const f of g.fields){ if (f.required) req.push(f.key); }\\n        }\\n      }\\n    }\\n  }\\n  return req;\\n}\\n\\nfunction get(obj, path){\\n  return path.split('.').reduce((o,k)=> (o && o[k]!==undefined)? o[k] : undefined, obj);\\n}\\n\\nfunction deepMerge(target, source){\\n  if (Array.isArray(target) || Array.isArray(source)) return (target && target.length? target : source)||[];\\n  if (typeof target!== 'object' || target===null) target={};\\n  if (typeof source!== 'object' || source===null) return target;\\n  const out = {...source, ...target};\\n  for (const k of Object.keys(out)){\\n    if (typeof target[k]==='object' && target[k]!==null && typeof source[k]==='object' && source[k]!==null){\\n      out[k] = deepMerge(target[k], source[k]);\\n    }\\n  }\\n  return out;\\n}\\n\\nconst required = requiredKeysFromSchema(schema);\\nconst missing = required.filter(k => {\\n  const v = get(payload, k);\\n  return v===undefined || v===null || v==='';\\n});\\n\\nif (missing.length){\\n  return [{ json: { ok:false, error:'VALIDATION_ERROR', missing, exampleUsed:false }, pairedItem: { item: 0 } }];\\n}\\n\\n// Completa con defaults del ejemplo (sin pisar campos presentes)\\nconst merged = deepMerge(payload, example);\\n\\nreturn [{ json: { ok:true, data: merged } }];"
+      },
+      "id": "ValidateAndMerge",
+      "name": "Validate + Merge Example",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [740, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [],
+          "number": [],
+          "string": [
+            { "value1": "={{$json.ok}}", "operation": "notEqual", "value2": true }
+          ]
+        }
+      },
+      "id": "IfInvalid",
+      "name": "If Invalid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [980, 300]
+    },
+    {
+      "parameters": {
+        "statusCode": 400,
+        "responseMode": "lastNode",
+        "responseData": "={{$json}}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {"name":"Access-Control-Allow-Origin","value":"*"},
+              {"name":"Access-Control-Allow-Methods","value":"POST,OPTIONS"},
+              {"name":"Access-Control-Allow-Headers","value":"Content-Type, Authorization"}
+            ]
+          }
+        }
+      },
+      "id": "BadRequest",
+      "name": "HTTP 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1220, 220]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.ECOTRACK_API_BASE + '/api/siniestros' }}",
+        "method": "POST",
+        "sendBody": true,
+        "jsonParameters": true,
+        "options": {
+          "timeout": 60000,
+          "retry": { "maxAttempts": 3, "delayBetweenAttempts": 1000 }
+        },
+        "bodyParametersJson": "={{$json.data}}"
+      },
+      "id": "PostAPI",
+      "name": "POST → EcoTrack API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1220, 380]
+    },
+    {
+      "parameters": {
+        "fromEmail": "no-reply@ecotrack",
+        "toEmail": "alerts@example.com",
+        "subject": "EcoTrack: Siniestro recibido",
+        "html": "={{$json.data && $json.data.antecedentes_siniestro ? $json.data.antecedentes_siniestro.fecha_accidente : ''}}"
+      },
+      "id": "SendEmail",
+      "name": "Send Email (simple)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1460, 380]
+    },
+    {
+      "parameters": {
+        "responseMode": "lastNode",
+        "responseData": "={{ Object.assign({status:'ok'}, $json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {"name":"Access-Control-Allow-Origin","value":"*"},
+              {"name":"Access-Control-Allow-Methods","value":"POST,OPTIONS"},
+              {"name":"Access-Control-Allow-Headers","value":"Content-Type, Authorization"}
+            ]
+          }
+        }
+      },
+      "id": "OKResponse",
+      "name": "HTTP 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1700, 380]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Validate + Merge Example", "type": "main", "index": 0 }]] },
+    "Read Schema": { "main": [[{ "node": "Schema → JSON", "type": "main", "index": 0 }]] },
+    "Schema → JSON": { "main": [[{ "node": "Validate + Merge Example", "type": "main", "index": 1 }]] },
+    "Read Example": { "main": [[{ "node": "Example → JSON", "type": "main", "index": 0 }]] },
+    "Example → JSON": { "main": [[{ "node": "Validate + Merge Example", "type": "main", "index": 2 }]] },
+    "Validate + Merge Example": {
+      "main": [
+        [{ "node": "If Invalid", "type": "main", "index": 0 }]
+      ]
+    },
+    "If Invalid": {
+      "main": [
+        [{ "node": "HTTP 400", "type": "main", "index": 0 }],
+        [{ "node": "POST → EcoTrack API", "type": "main", "index": 0 }]
+      ]
+    },
+    "POST → EcoTrack API": { "main": [[{ "node": "Send Email (simple)", "type": "main", "index": 0 }]] },
+    "Send Email (simple)": { "main": [[{ "node": "HTTP 200", "type": "main", "index": 0 }]] }
+  },
+  "active": false
+}

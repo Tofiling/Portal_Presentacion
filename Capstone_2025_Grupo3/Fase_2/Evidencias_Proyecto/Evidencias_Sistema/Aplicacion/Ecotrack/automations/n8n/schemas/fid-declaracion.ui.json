@@ -1,0 +1,109 @@
+{
+  "formId": "fid-declaracion-siniestro",
+  "title": "Declaración Jurada Simple de Siniestro",
+  "version": "1.0.0",
+  "locale": "es-CL",
+  "sections": [
+    {
+      "id": "antecedentes_siniestro",
+      "title": "Antecedentes del Siniestro",
+      "fields": [
+        { "key": "fecha_accidente", "label": "Fecha Accidente", "type": "date", "required": true },
+        { "key": "hora_accidente", "label": "Hora", "type": "time", "required": true },
+        { "key": "lugar_accidente", "label": "Lugar del Accidente", "type": "text", "required": true, "maxLength": 200 },
+        { "key": "comuna", "label": "Comuna", "type": "text", "required": true, "maxLength": 80 },
+        { "key": "concurrio_carabineros", "label": "¿Concurrió Carabineros?", "type": "boolean", "required": true },
+        { "key": "se_tomo_alcoholemia", "label": "¿Se tomó alcoholemia?", "type": "boolean", "required": true },
+        { "key": "lesionados", "label": "Lesionados (incluso leves)", "type": "boolean", "required": true },
+        { "key": "danos_materiales", "label": "¿Daños materiales?", "type": "boolean", "required": true },
+        { "key": "numero_vehiculos_involucrados", "label": "N° Vehículos Involucrados", "type": "number", "required": true, "min": 1, "max": 10 },
+        { "key": "vehiculos_distintos_de_a_y_b", "label": "Vehículos distintos de A y B", "type": "boolean", "required": true },
+        { "key": "objetos_distintos_al_vehiculo", "label": "Objetos distintos al vehículo", "type": "boolean", "required": true }
+      ]
+    },
+    {
+      "id": "vehiculo_a",
+      "title": "Vehículo A (Asegurado o Conductor del Vehículo)",
+      "groups": [
+        {
+          "id": "conductor_a",
+          "title": "Datos del Conductor/Asegurado",
+          "fields": [
+            { "key": "vehiculo_a.persona.nombre_completo", "label": "Nombre Completo", "type": "text", "required": true, "maxLength": 120 },
+            { "key": "vehiculo_a.persona.rut", "label": "Cédula de Identidad / RUT", "type": "text", "required": true, "pattern": "^[0-9]{1,2}\\.[0-9]{3}\\.[0-9]{3}-[0-9kK]{1}$|^[0-9]{7,8}-[0-9kK]{1}$" },
+            { "key": "vehiculo_a.persona.fecha_nacimiento", "label": "Fecha Nacimiento", "type": "date", "required": true },
+            { "key": "vehiculo_a.persona.direccion", "label": "Dirección", "type": "text", "required": true, "maxLength": 160 },
+            { "key": "vehiculo_a.persona.comuna", "label": "Comuna", "type": "text", "required": true, "maxLength": 80 },
+            { "key": "vehiculo_a.persona.telefono", "label": "Teléfono Contacto", "type": "tel", "required": true, "pattern": "^\\+?\\d{8,15}$" },
+            { "key": "vehiculo_a.persona.email", "label": "Correo Electrónico", "type": "email", "required": true }
+          ]
+        },
+        {
+          "id": "datos_vehiculo_a",
+          "title": "Datos del Vehículo A",
+          "fields": [
+            { "key": "vehiculo_a.vehiculo.marca", "label": "Marca", "type": "text", "required": true },
+            { "key": "vehiculo_a.vehiculo.modelo", "label": "Modelo", "type": "text", "required": true },
+            { "key": "vehiculo_a.vehiculo.anio", "label": "Año", "type": "number", "required": true, "min": 1950, "max": 2100 },
+            { "key": "vehiculo_a.vehiculo.patente", "label": "Patente", "type": "text", "required": true, "maxLength": 10 },
+            { "key": "vehiculo_a.vehiculo.numero_motor", "label": "N° Motor", "type": "text", "required": false, "maxLength": 40 },
+            { "key": "vehiculo_a.vehiculo.vin_chasis", "label": "N° VIN / Chassis", "type": "text", "required": true, "maxLength": 30 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vehiculo_b",
+      "title": "Vehículo B (Tercero Involucrado)",
+      "groups": [
+        {
+          "id": "conductor_b",
+          "title": "Datos del Conductor/Tercero",
+          "fields": [
+            { "key": "vehiculo_b.persona.nombre_completo", "label": "Nombre Completo", "type": "text", "required": true },
+            { "key": "vehiculo_b.persona.rut", "label": "Cédula de Identidad / RUT", "type": "text", "required": true, "pattern": "^[0-9]{1,2}\\.[0-9]{3}\\.[0-9]{3}-[0-9kK]{1}$|^[0-9]{7,8}-[0-9kK]{1}$" },
+            { "key": "vehiculo_b.persona.fecha_nacimiento", "label": "Fecha Nacimiento", "type": "date", "required": false },
+            { "key": "vehiculo_b.persona.direccion", "label": "Dirección", "type": "text", "required": true },
+            { "key": "vehiculo_b.persona.comuna", "label": "Comuna", "type": "text", "required": true },
+            { "key": "vehiculo_b.persona.telefono", "label": "Teléfono Contacto", "type": "tel", "required": true, "pattern": "^\\+?\\d{8,15}$" },
+            { "key": "vehiculo_b.persona.email", "label": "Correo Electrónico", "type": "email", "required": false }
+          ]
+        },
+        {
+          "id": "datos_vehiculo_b",
+          "title": "Datos del Vehículo B",
+          "fields": [
+            { "key": "vehiculo_b.vehiculo.marca", "label": "Marca", "type": "text", "required": true },
+            { "key": "vehiculo_b.vehiculo.modelo", "label": "Modelo", "type": "text", "required": true },
+            { "key": "vehiculo_b.vehiculo.anio", "label": "Año", "type": "number", "required": true, "min": 1950, "max": 2100 },
+            { "key": "vehiculo_b.vehiculo.patente", "label": "Patente", "type": "text", "required": true, "maxLength": 10 },
+            { "key": "vehiculo_b.vehiculo.numero_motor", "label": "N° Motor", "type": "text", "required": false },
+            { "key": "vehiculo_b.vehiculo.vin_chasis", "label": "N° VIN / Chassis", "type": "text", "required": true },
+            { "key": "vehiculo_b.aseguradora", "label": "Aseguradora", "type": "text", "required": false }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "declaracion",
+      "title": "Declaración",
+      "fields": [
+        { "key": "declaracion.entendido_procedimiento", "label": "Declaro haber leído las instrucciones", "type": "boolean", "required": true },
+        { "key": "declaracion.acepta_declaracion_jurada", "label": "Acepto esta declaración jurada", "type": "boolean", "required": true },
+        { "key": "declaracion.lugar_firma", "label": "Lugar", "type": "text", "required": true },
+        { "key": "declaracion.fecha_firma", "label": "Fecha", "type": "date", "required": true },
+        { "key": "firmas.vehiculo_a", "label": "Firma Conductor Vehículo A", "type": "signature", "required": true },
+        { "key": "firmas.vehiculo_b", "label": "Firma Conductor Vehículo B", "type": "signature", "required": true }
+      ]
+    },
+    {
+      "id": "adjuntos",
+      "title": "Adjuntos",
+      "fields": [
+        { "key": "adjuntos.fotos", "label": "Fotos del siniestro", "type": "file[]", "accept": ["image/*"], "required": false, "maxItems": 10 },
+        { "key": "adjuntos.croquis", "label": "Croquis/diagrama", "type": "file", "accept": ["image/*","application/pdf"], "required": false },
+        { "key": "adjuntos.otros", "label": "Otros documentos", "type": "file[]", "accept": ["application/pdf","image/*"], "required": false, "maxItems": 10 }
+      ]
+    }
+  ]
+}

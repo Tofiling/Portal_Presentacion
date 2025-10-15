@@ -1,0 +1,75 @@
+{
+  "formId": "fid-declaracion-siniestro",
+  "metadata": {
+    "createdAt": "2025-09-09T12:00:00-03:00",
+    "version": "1.0.0",
+    "origen": "web"
+  },
+  "antecedentes_siniestro": {
+    "fecha_accidente": "2025-09-08",
+    "hora_accidente": "14:35",
+    "lugar_accidente": "",
+    "comuna": "",
+    "concurrio_carabineros": null,
+    "se_tomo_alcoholemia": null,
+    "lesionados": null,
+    "danos_materiales": null,
+    "numero_vehiculos_involucrados": 2,
+    "vehiculos_distintos_de_a_y_b": null,
+    "objetos_distintos_al_vehiculo": null
+  },
+  "vehiculo_a": {
+    "persona": {
+      "nombre_completo": "",
+      "rut": "",
+      "fecha_nacimiento": "",
+      "direccion": "",
+      "comuna": "",
+      "telefono": "",
+      "email": ""
+    },
+    "vehiculo": {
+      "marca": "",
+      "modelo": "",
+      "anio": null,
+      "patente": "",
+      "numero_motor": "",
+      "vin_chasis": ""
+    }
+  },
+  "vehiculo_b": {
+    "persona": {
+      "nombre_completo": "",
+      "rut": "",
+      "fecha_nacimiento": "",
+      "direccion": "",
+      "comuna": "",
+      "telefono": "",
+      "email": ""
+    },
+    "vehiculo": {
+      "marca": "",
+      "modelo": "",
+      "anio": null,
+      "patente": "",
+      "numero_motor": "",
+      "vin_chasis": ""
+    },
+    "aseguradora": ""
+  },
+  "declaracion": {
+    "entendido_procedimiento": null,
+    "acepta_declaracion_jurada": null,
+    "lugar_firma": "",
+    "fecha_firma": ""
+  },
+  "firmas": {
+    "vehiculo_a": "", 
+    "vehiculo_b": ""
+  },
+  "adjuntos": {
+    "fotos": [],
+    "croquis": "",
+    "otros": []
+  }
+}

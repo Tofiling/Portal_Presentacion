@@ -1,0 +1,14 @@
+{
+  "userManagement": { "enabled": true },
+  "executions": {
+    "mode": "regular",
+    "saveDataOnSuccess": "none",
+    "saveDataOnError": "all",
+    "pruneData": true,
+    "pruneDataMaxAge": 336,
+    "pruneDataMaxCount": 20000
+  },
+  "logs": { "level": "info", "output": "console" },
+  "security": { "blockFileAccessToN8nFiles": true },
+  "endpoints": { "metrics": { "enabled": false }, "health": { "enabled": true } }
+}
